@@ -7,7 +7,7 @@ const UserSchema = new Schema(
   {
     email: { type: String, required: true },
     password: { type: String, required: true },
-    role: { type: String, enum: ["host", "guest"], required: true },
+    role: { type: String, enum: ["host", "guest"], default: "host" },
   },
   {
     timeStamps: true,
@@ -35,6 +35,23 @@ UserSchema.methods.toJSON = function () {
 
   return userObject
 }
+
+UserSchema.statics.checkCredentials = async function (email, plainPW) {
+  const user = await this.findOne({ email })
+
+  if (user) {
+    const isPasswordMathed = await bcrypt.compare(plainPW, user.password)
+
+    if (isPasswordMathed) {
+      return user
+    } else {
+      return null
+    }
+  } else {
+    return null
+  }
+}
+
 export default model("User", UserSchema)
 
 // Every User registers with email, password and a role, which could be either host or guest.

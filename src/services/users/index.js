@@ -1,10 +1,13 @@
 import express from "express"
 import createError from "http-errors"
+import { authMiddlaware } from "../../auth/authMiddlaware.js"
+import { JWTauthenticate } from "../../auth/GenAndVerifyToken.js"
+import AccommodationModel from "../accommodations/schema.js"
 import UserModel from "./schema.js"
 
 const userRouter = express.Router()
 //  -----------------------------------------------------ENDPOINT (ROUTE)--------------------------------
-// --------------------1 post-----------------
+// -------------------- post -REGISTER-----------------
 
 userRouter.post("/register", async (req, res, next) => {
   try {
@@ -16,8 +19,47 @@ userRouter.post("/register", async (req, res, next) => {
     next(error)
   }
 })
+// -------------------- post -LOGIN-----------------
+
+userRouter.post("/login", async (req, res, next) => {
+  try {
+    const { email, password } = req.body
+
+    const user = await UserModel.checkCredentials(email, password)
+
+    if (user) {
+      const accessToken = await JWTauthenticate(user)
+      res.send({ accessToken })
+    } else {
+      next(createError(401, "Credentials are not ok!"))
+    }
+  } catch (error) {
+    next(error)
+  }
+})
+
+// -------------------- get me-----------------
+userRouter.get("/me", authMiddlaware, async (req, res, next) => {
+  try {
+    const user = await UserModel.findById(req.user._id)
+    res.send(user)
+  } catch (error) {
+    console.log(error)
+    next(error)
+  }
+})
+// -------------------- get me with accomdattion-----------------
+userRouter.get("/me/accomodation", authMiddlaware, async (req, res, next) => {
+  try {
+    const accomodation = await AccommodationModel.find({ user: req.user._id.toString() })
+    res.send(accomodation)
+  } catch (error) {
+    console.log(error)
+    next(error)
+  }
+})
 // --------------------2 get all-----------------
-userRouter.get("/", async (req, res, next) => {
+userRouter.get("/", authMiddlaware, async (req, res, next) => {
   try {
     const user = await UserModel.find()
     if (user) {
