@@ -1,4 +1,5 @@
 import mongoose from "mongoose"
+import bcrypt from "bcrypt"
 
 const { Schema, model } = mongoose
 
@@ -12,6 +13,28 @@ const UserSchema = new Schema(
     timeStamps: true,
   }
 )
+UserSchema.pre("save", async function (next) {
+  const newUser = this
+  const plainpassword = newUser.password
+
+  if (newUser.isModified("password")) {
+    const hash = await bcrypt.hashSync(plainpassword, 11)
+    newUser.password = hash
+  }
+  next()
+})
+
+UserSchema.methods.toJSON = function () {
+  // this toJSON function will be called EVERY TIME express does a res.send(user/s)
+
+  const userDocument = this
+  const userObject = userDocument.toObject() // we have to convert to naormal  object beacuse userObject is Mongoose doucment(_doc)
+
+  delete userObject.password
+  delete userObject.__v
+
+  return userObject
+}
 export default model("User", UserSchema)
 
 // Every User registers with email, password and a role, which could be either host or guest.
