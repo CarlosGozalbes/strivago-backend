@@ -14,12 +14,12 @@ const UserSchema = new Schema(
     timeStamps: true,
   }
 )
-UserSchema.pre("save", async function (next) {
+UserSchema.pre("save",  function (next) {
   const newUser = this
   const plainpassword = newUser.password
 
   if (newUser.isModified("password")) {
-    const hash = await bcrypt.hashSync(plainpassword, 11)
+    const hash = bcrypt.hashSync(plainpassword, 11)
     newUser.password = hash
   }
   next()

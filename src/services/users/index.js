@@ -12,9 +12,12 @@ const userRouter = express.Router()
 
 userRouter.post("/register", async (req, res, next) => {
   try {
-    const newUser = new UserModel(req.body)
-    const { _id } = await newUser.save()
-    res.status(201).send({ _id })
+    const user = new UserModel(req.body)
+    const newUser = await user.save()
+    if(newUser){
+      const accessToken = await JWTauthenticate(newUser)
+      res.status(201).send({accessToken})
+    }
   } catch (error) {
     console.log(error)
     next(error)
@@ -50,6 +53,21 @@ userRouter.get("/me", authMiddlaware, async (req, res, next) => {
   }
 })
 // -------------------- get me with accomdattion-----------------
+
+userRouter.get(
+  "/me/accommodation",
+  authMiddlaware,
+  async (req, res, next) => {
+    try {
+      const accomodation = await AccommodationModel.find().populate("host")
+      const users = accomodation.filter(user => user.host[0].role === "host");
+      res.send(users);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+);
 
 // --------------------2 get all-----------------
 userRouter.get("/", /* authMiddlaware, */ async (req, res, next) => {

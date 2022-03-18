@@ -2,7 +2,7 @@ import express from "express";
 import createHttpError from "http-errors";
 import accommodationsModel from "./schema.js";
 import { authMiddlaware } from "../../auth/authMiddlaware.js";
-import { userHostOnliMiddleware } from "../../auth/usersOnlyMiddleware.js";
+import { userHostOnliMiddleware, guestOnlyMiddleware } from "../../auth/usersOnlyMiddleware.js";
 // import multer from "multer";
 // import { v2 as cloudinary } from "cloudinary";
 // import { CloudinaryStorage } from "multer-storage-cloudinary";
