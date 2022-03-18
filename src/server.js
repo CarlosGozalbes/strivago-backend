@@ -2,6 +2,8 @@ import express from "express"
 import listEndpoints from "express-list-endpoints"
 import cors from "cors"
 import mongoose from "mongoose"
+import passport from "passport"
+import { facebookStrategy } from "./auth/oauth.js"
 import { badRequestHandler, unauthorizedHandler, notFoundHandler, genericErrorHandler, forbiddenHandler } from "./errorHandlers.js"
 import accommodationsRouter from "./services/accommodations/index.js"
 import userRouter from "./services/users/index.js"
@@ -12,12 +14,12 @@ import userRouter from "./services/users/index.js"
 const server = express()
 const port = process.env.PORT || 3001
 
-// passport.use("google", googleStrategy);
+passport.use("facebook", facebookStrategy);
 //-----------------------------------MIDDLE WARES-----------------------------
 
 server.use(cors())
 server.use(express.json())
-// server.use(passport.initialize());
+server.use(passport.initialize());
 
 //-----------------------------------END POINTS-----------------------------
 server.use("/accommodations", accommodationsRouter)
