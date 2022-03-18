@@ -1,10 +1,10 @@
 import express from "express";
 import createHttpError from "http-errors";
 import accommodationsModel from "./schema.js";
-import multer from "multer";
-import { v2 as cloudinary } from "cloudinary";
-import { CloudinaryStorage } from "multer-storage-cloudinary";
-import q2m from "query-to-mongo";
+// import multer from "multer";
+// import { v2 as cloudinary } from "cloudinary";
+// import { CloudinaryStorage } from "multer-storage-cloudinary";
+// import q2m from "query-to-mongo";
 // import { basicAuthMiddleware } from "../../auth/basic.js";
 // import { JWTAuthMiddleware } from "../../auth/token.js";
 // const cloudinaryStorage = new CloudinaryStorage({
