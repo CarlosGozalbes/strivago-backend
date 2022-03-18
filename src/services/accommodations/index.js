@@ -1,6 +1,7 @@
 import express from "express";
 import createHttpError from "http-errors";
 import accommodationsModel from "./schema.js";
+import { authMiddlaware } from "../../auth/authMiddlaware.js";
 // import multer from "multer";
 // import { v2 as cloudinary } from "cloudinary";
 // import { CloudinaryStorage } from "multer-storage-cloudinary";
@@ -18,7 +19,7 @@ const accommodationsRouter = express.Router();
 
 accommodationsRouter.post(
   "/",
-  /* basicAuthMiddleware */ async (req, res, next) => {
+  authMiddlaware, async (req, res, next) => {
     try {
       const newAccommodation = new accommodationsModel({
         ...req.body,
@@ -76,7 +77,8 @@ accommodationsRouter.get(
 );
 
 accommodationsRouter.put(
-  "/:accommodationId",/* basicAuthMiddleware */
+  "/:accommodationId",
+  authMiddlaware /* basicAuthMiddleware */,
   async (req, res, next) => {
     try {
       const accommodationId = req.params.accommodationId;
@@ -88,7 +90,12 @@ accommodationsRouter.put(
         await updatedAccommodation.update(req.body);
         res.send(204).send();
       } else {
-        next(createHttpError(404, `accommodation with id ${accommodationId} not found!`));
+        next(
+          createHttpError(
+            404,
+            `accommodation with id ${accommodationId} not found!`
+          )
+        );
       }
     } catch (error) {
       next(error);
@@ -97,8 +104,9 @@ accommodationsRouter.put(
 );
 
 accommodationsRouter.delete(
-  "/:accommodationId", /* basicAuthMiddleware */
-  
+  "/:accommodationId",
+  authMiddlaware, /* basicAuthMiddleware */
+
   async (req, res, next) => {
     try {
       const accommodationId = req.params.accommodationId;
@@ -108,7 +116,12 @@ accommodationsRouter.delete(
       if (deletedAccommodation) {
         res.status(204).send();
       } else {
-        next(createHttpError(404, `accommodation with id ${accommodationId} not found!`));
+        next(
+          createHttpError(
+            404,
+            `accommodation with id ${accommodationId} not found!`
+          )
+        );
       }
     } catch (error) {
       next(error);
