@@ -49,17 +49,9 @@ userRouter.get("/me", authMiddlaware, async (req, res, next) => {
   }
 })
 // -------------------- get me with accomdattion-----------------
-userRouter.get("/me/accomodation", authMiddlaware, async (req, res, next) => {
-  try {
-    const accomodation = await AccommodationModel.find({ user: req.user._id.toString() })
-    res.send(accomodation)
-  } catch (error) {
-    console.log(error)
-    next(error)
-  }
-})
+
 // --------------------2 get all-----------------
-userRouter.get("/", authMiddlaware, async (req, res, next) => {
+userRouter.get("/", /* authMiddlaware, */ async (req, res, next) => {
   try {
     const user = await UserModel.find()
     if (user) {

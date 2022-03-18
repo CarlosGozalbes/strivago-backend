@@ -2,6 +2,7 @@ import express from "express";
 import createHttpError from "http-errors";
 import accommodationsModel from "./schema.js";
 import { authMiddlaware } from "../../auth/authMiddlaware.js";
+import { userHostOnliMiddleware } from "../../auth/usersOnlyMiddleware.js";
 // import multer from "multer";
 // import { v2 as cloudinary } from "cloudinary";
 // import { CloudinaryStorage } from "multer-storage-cloudinary";
@@ -17,21 +18,18 @@ import { authMiddlaware } from "../../auth/authMiddlaware.js";
 
 const accommodationsRouter = express.Router();
 
-accommodationsRouter.post(
-  "/",
-  authMiddlaware, async (req, res, next) => {
-    try {
-      const newAccommodation = new accommodationsModel({
-        ...req.body,
-        host: [req.user._id],
-      });
-      const { _id } = await newAccommodation.save();
-      res.status(201).send({ _id });
-    } catch (error) {
-      next(error);
-    }
+accommodationsRouter.post("/", authMiddlaware, userHostOnliMiddleware,  async (req, res, next) => {
+  try {
+    const newAccommodation = new accommodationsModel({
+      ...req.body,
+      host: [req.user._id],
+    });
+    const { _id } = await newAccommodation.save();
+    res.status(201).send({ _id });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 accommodationsRouter.get("/", async (req, res, next) => {
   try {
@@ -54,27 +52,39 @@ accommodationsRouter.get("/", async (req, res, next) => {
 });
 
 accommodationsRouter.get(
-  "/:accommodationId",
-   async (req, res, next) => {
+  "/me/accommodation",
+  authMiddlaware,
+  async (req, res, next) => {
     try {
-      const accommodationId = req.params.accommodationId;
-
-      const accommodation = await accommodationsModel.findById(accommodationId);
-      if (accommodation) {
-        res.send(accommodation);
-      } else {
-        next(
-          createHttpError(
-            404,
-            `accommodation with id ${accommodationId} not found!`
-          )
-        );
-      }
+      const accomodation = await accommodationsModel.find().populate("host");
+      const users = accomodation.filter(user => user.host[0].role === "host");
+      res.send(users);
     } catch (error) {
+      console.log(error);
       next(error);
     }
   }
 );
+
+accommodationsRouter.get("/:accommodationId", async (req, res, next) => {
+  try {
+    const accommodationId = req.params.accommodationId;
+
+    const accommodation = await accommodationsModel.findById(accommodationId);
+    if (accommodation) {
+      res.send(accommodation);
+    } else {
+      next(
+        createHttpError(
+          404,
+          `accommodation with id ${accommodationId} not found!`
+        )
+      );
+    }
+  } catch (error) {
+    next(error);
+  }
+});
 
 accommodationsRouter.put(
   "/:accommodationId",
@@ -105,7 +115,7 @@ accommodationsRouter.put(
 
 accommodationsRouter.delete(
   "/:accommodationId",
-  authMiddlaware, /* basicAuthMiddleware */
+  authMiddlaware /* basicAuthMiddleware */,
 
   async (req, res, next) => {
     try {

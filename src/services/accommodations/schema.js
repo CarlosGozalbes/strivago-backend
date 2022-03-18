@@ -18,7 +18,7 @@ const accommodationSchema = new Schema(
     city: { type: String, required: true },
     maxGuest: { type: Number, required: true},
     image: { type: String, required: false },
-    host: [{ type: Schema.Types.ObjectId, ref: "Users" }],
+    host: [{ type: Schema.Types.ObjectId, ref: "User" }],
     description: { type: String, minLength: 20, required: true },
     comments: [commentSchemma],
   },

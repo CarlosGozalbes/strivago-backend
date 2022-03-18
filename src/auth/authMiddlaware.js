@@ -14,7 +14,7 @@ export const authMiddlaware =async(req,res,next)=> {
                 _id: payload._id,
                 role: payload.role
             }
-            next()
+            next();
         }
     } catch (error) {
         next(createHttpError(401, "User is unauthorized!"))        
