@@ -8,8 +8,6 @@ import { badRequestHandler, unauthorizedHandler, notFoundHandler, genericErrorHa
 import accommodationsRouter from "./services/accommodations/index.js"
 import userRouter from "./services/users/index.js"
 
-// import passport from "passport";
-// import googleStrategy from "./auth/oauth.js";
 
 const server = express()
 const port = process.env.PORT || 3001
