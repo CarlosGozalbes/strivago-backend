@@ -37,8 +37,7 @@ userRouter.get("/:userId", async (req, res, next) => {
     if (user) {
       res.send(user)
     } else {
-      //   next(createError(404, "users not found"))
-      console.log(error)
+      next(createError(404, `user with id ${user.req.params.userId}IS NOT FOUND IN THE DB !!`))
     }
   } catch (error) {
     console.log(error)
