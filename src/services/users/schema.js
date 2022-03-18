@@ -8,6 +8,7 @@ const UserSchema = new Schema(
     email: { type: String, required: true },
     password: { type: String, required: true },
     role: { type: String, enum: ["host", "guest"], default: "host" },
+    facebookId:{type:String}
   },
   {
     timeStamps: true,

@@ -4,6 +4,7 @@ import { authMiddlaware } from "../../auth/authMiddlaware.js"
 import { JWTauthenticate } from "../../auth/GenAndVerifyToken.js"
 import AccommodationModel from "../accommodations/schema.js"
 import UserModel from "./schema.js"
+import passport from "passport"
 
 const userRouter = express.Router()
 //  -----------------------------------------------------ENDPOINT (ROUTE)--------------------------------
@@ -65,6 +66,24 @@ userRouter.get("/", /* authMiddlaware, */ async (req, res, next) => {
     next(error)
   }
 })
+
+
+userRouter.get("/facebookLogin", passport.authenticate("facebook"))
+
+
+userRouter.get(
+  "/facebookRedirect",
+  passport.authenticate("facebook", { failureRedirect: "/login" }),
+  async (req, res, next) => {
+    try {
+      res.redirect('/');
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+
 // --------------------3 get with id-----------------
 userRouter.get("/:userId", async (req, res, next) => {
   try {
