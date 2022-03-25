@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from "express";
+import { ErrorRequestHandler } from 'express';
 
 
-export const badRequestHandler = (err:any, req:Request, res:Response, next:NextFunction) => {
+export const badRequestHandler:ErrorRequestHandler  = (err, req, res, next) => {
   if (err.status === 400) {
     console.log("I am the bad request handler", err);
     res.status(400).send({ message: err.message, errorsList: err.errorsList });
@@ -10,7 +11,7 @@ export const badRequestHandler = (err:any, req:Request, res:Response, next:NextF
   }
 };
 
-export const unauthorizedHandler = (err:any, req:Request, res:Response, next:NextFunction) => {
+export const unauthorizedHandler:ErrorRequestHandler  = (err, req, res, next) => {
   if (err.status === 401) {
     console.log("I am the unauthorized handler", err);
     res.status(401).send({ message: err.message });
@@ -19,7 +20,7 @@ export const unauthorizedHandler = (err:any, req:Request, res:Response, next:Nex
   }
 };
 
-export const notFoundHandler = (err:any, req:Request, res:Response, next:NextFunction) => {
+export const notFoundHandler:ErrorRequestHandler  = (err, req, res, next) => {
   if (err.status === 404) {
     console.log("I am the not found handler", err);
     res.status(404).send({ message: err.message });
@@ -28,12 +29,12 @@ export const notFoundHandler = (err:any, req:Request, res:Response, next:NextFun
   }
 };
 
-export const genericErrorHandler = (err:any, req:Request, res:Response, next:NextFunction) => {
+export const genericErrorHandler:ErrorRequestHandler  = (err, req, res, next) => {
   console.log("I am the error handler here is the error: ", err);
   res.status(500).send({ message: "Generic Server Error!" });
 };
 
-export const forbiddenHandler = (err:any, req:Request, res:Response, next:NextFunction) => {
+export const forbiddenHandler :ErrorRequestHandler = (err, req, res, next) => {
   if (err.status === 403) {
     res
       .status(403)

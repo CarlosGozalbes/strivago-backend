@@ -1,14 +1,12 @@
 import createHttpError from "http-errors";
-import { Request, Response, NextFunction } from "express";
+
+import { RequestHandler } from "express";
 declare module "express" {
   interface Request {
     user: any;
   }
 }
-export const userHostOnliMiddleware = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
+export const userHostOnliMiddleware: RequestHandler = async (req,res,next
 ) => {
   try {
     console.log({ ruser: req.user });
@@ -22,11 +20,7 @@ export const userHostOnliMiddleware = async (
   }
 };
 
-export const guestOnlyMiddleware = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const guestOnlyMiddleware: RequestHandler = async (req, res, next) => {
   try {
     if (req.user.role === "guest") {
       next();

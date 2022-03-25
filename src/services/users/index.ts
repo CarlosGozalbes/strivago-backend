@@ -5,13 +5,12 @@ import { JWTauthenticate } from "../../auth/GenAndVerifyToken.js";
 import AccommodationModel from "../accommodations/schema.js";
 import UserModel from "./schema.js";
 import passport from "passport";
-import { Request, Response, NextFunction } from "express";
 
 const userRouter = express.Router();
 //  -----------------------------------------------------ENDPOINT (ROUTE)--------------------------------
 // -------------------- post -REGISTER-----------------
 
-userRouter.post("/register", async (req:Request, res: Response, next: NextFunction) => {
+userRouter.post("/register", async (req, res, next) => {
   try {
     const user = new UserModel(req.body);
     const newUser = await user.save();
@@ -26,7 +25,7 @@ userRouter.post("/register", async (req:Request, res: Response, next: NextFuncti
 });
 // -------------------- post -LOGIN-----------------
 
-userRouter.post("/login", async (req:Request, res: Response, next: NextFunction) => {
+userRouter.post("/login", async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
@@ -44,7 +43,7 @@ userRouter.post("/login", async (req:Request, res: Response, next: NextFunction)
 });
 
 // -------------------- get me-----------------
-userRouter.get("/me", authMiddlaware, async (req:Request, res: Response, next: NextFunction) => {
+userRouter.get("/me", authMiddlaware, async (req, res, next) => {
   try {
     const user = await UserModel.findById(req.user._id);
     res.send(user);
@@ -55,7 +54,7 @@ userRouter.get("/me", authMiddlaware, async (req:Request, res: Response, next: N
 });
 // -------------------- get me with accomdattion-----------------
 
-userRouter.get("/me/accommodation", authMiddlaware, async (req:Request, res: Response, next: NextFunction) => {
+userRouter.get("/me/accommodation", authMiddlaware, async (req, res, next) => {
   try {
     const accomodation = await AccommodationModel.find().populate("host");
     const users = accomodation.filter((user) => user.host[0].role === "host");
@@ -69,7 +68,7 @@ userRouter.get("/me/accommodation", authMiddlaware, async (req:Request, res: Res
 // --------------------2 get all-----------------
 userRouter.get(
   "/",
-  /* authMiddlaware, */ async (req:Request, res: Response, next: NextFunction) => {
+  /* authMiddlaware, */ async (req, res, next) => {
     try {
       const user = await UserModel.find();
       if (user) {
@@ -100,7 +99,7 @@ userRouter.get(
 );
 
 // --------------------3 get with id-----------------
-userRouter.get("/:userId", async (req:Request, res: Response, next: NextFunction) => {
+userRouter.get("/:userId", async (req, res, next) => {
   try {
     const user = await UserModel.findById(req.params.userId);
     if (user) {
@@ -119,7 +118,7 @@ userRouter.get("/:userId", async (req:Request, res: Response, next: NextFunction
   }
 });
 // --------------------4 put with id-----------------
-userRouter.put("/:userId", async (req:Request, res: Response, next: NextFunction) => {
+userRouter.put("/:userId", async (req, res, next) => {
   try {
     const user = await UserModel.findByIdAndUpdate(
       req.params.userId,
@@ -133,7 +132,7 @@ userRouter.put("/:userId", async (req:Request, res: Response, next: NextFunction
   }
 });
 // --------------------5 delete with id-----------------
-userRouter.delete("/:userId", async (req:Request, res: Response, next: NextFunction) => {
+userRouter.delete("/:userId", async (req, res, next) => {
   try {
     const user = await UserModel.findByIdAndDelete(req.params.userId);
     res.send({ MESSAGE: "user delted from the DB!!", USER_id: user._id });
