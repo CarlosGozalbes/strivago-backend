@@ -5,7 +5,9 @@ import { JWTauthenticate } from "../../auth/GenAndVerifyToken.js";
 import AccommodationModel from "../accommodations/schema.js";
 import UserModel from "./schema.js";
 import passport from "passport";
-
+ interface user{
+_id:any
+ }
 const userRouter = express.Router();
 //  -----------------------------------------------------ENDPOINT (ROUTE)--------------------------------
 // -------------------- post -REGISTER-----------------
@@ -45,8 +47,8 @@ userRouter.post("/login", async (req, res, next) => {
 // -------------------- get me-----------------
 userRouter.get("/me", authMiddlaware, async (req, res, next) => {
   try {
-    const user = await UserModel.findById(req.user._id);
-    res.send(user);
+    const uniqueuser = await UserModel.findById(req.?user._id);
+    res.send(uniqueuser);
   } catch (error) {
     console.log(error);
     next(error);
