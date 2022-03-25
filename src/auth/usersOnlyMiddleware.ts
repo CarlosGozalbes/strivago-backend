@@ -2,9 +2,7 @@ import createHttpError from "http-errors";
 
 import { RequestHandler } from "express";
 
-interface User {
-  role: String;
-}
+
 
 export const userHostOnliMiddleware: RequestHandler = async (req,res,next) => {
   try {

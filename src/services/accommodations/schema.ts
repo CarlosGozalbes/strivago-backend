@@ -1,6 +1,13 @@
 import mongoose from "mongoose";
 
 const { Schema, model } = mongoose;
+interface Host {
+  name: string
+  user: {
+      _id: string,
+      timestamp: number
+  }[]
+}
 
 const commentSchemma = new Schema({
   text: { type: String, minLength: 10, required: true },
@@ -14,7 +21,7 @@ const commentSchemma = new Schema({
 
 const accommodationSchema = new Schema(
   {
-    name: {  type: String, required: true, },
+    name: { type: String, required: true, },
     city: { type: String, required: true },
     maxGuest: { type: Number, required: true},
     image: { type: String, required: false },

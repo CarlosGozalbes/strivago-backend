@@ -20,9 +20,7 @@ import {
 //   },
 // });
 
-interface User {
-  _id: string;
-}
+
 
 const accommodationsRouter = express.Router();
 
@@ -34,7 +32,7 @@ accommodationsRouter.post(
     try {
       const newAccommodation = new accommodationsModel({
         ...req.body,
-        host: [req.user!._id],
+        host: [req.user._id],
       });
       const { _id } = await newAccommodation.save();
       res.status(201).send({ _id });
