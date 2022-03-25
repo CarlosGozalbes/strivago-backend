@@ -4,9 +4,11 @@ import cors from "cors"
 import mongoose from "mongoose"
 import passport from "passport"
 import { facebookStrategy } from "./auth/oauth.js"
-import { badRequestHandler, unauthorizedHandler, notFoundHandler, genericErrorHandler, forbiddenHandler } from "./errorHandlers.js"
+import { badRequestHandler, unauthorizedHandler, notFoundHandler, genericErrorHandler, forbiddenHandler } from "./errorhandlers.js"
 import accommodationsRouter from "./services/accommodations/index.js"
 import userRouter from "./services/users/index.js"
+
+
 
 
 const server = express()
@@ -32,7 +34,13 @@ server.use(genericErrorHandler)
 server.use(forbiddenHandler)
 
 //-----------------------------------CONNECTIONS--------------------------
+process.env.TS_NODE_DEV && require("dotenv").config()
+if (!process.env.MONGO_CONNECTION) {
+  throw new Error("No Mongo URL defined.")
+}
 mongoose.connect(process.env.MONGO_CONNECTION)
+
+
 
 mongoose.connection.on("connected", () => {
   console.log("Successfully connected to Mongo!")

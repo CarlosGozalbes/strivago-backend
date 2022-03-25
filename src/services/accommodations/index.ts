@@ -2,11 +2,15 @@ import express from "express";
 import createHttpError from "http-errors";
 import accommodationsModel from "./schema.js";
 import { authMiddlaware } from "../../auth/authMiddlaware.js";
-import { userHostOnliMiddleware, guestOnlyMiddleware } from "../../auth/usersOnlyMiddleware.js";
+import {
+  userHostOnliMiddleware,
+  guestOnlyMiddleware,
+} from "../../auth/usersOnlyMiddleware.js";
+import { Request, Response, NextFunction } from "express";
 // import multer from "multer";
 // import { v2 as cloudinary } from "cloudinary";
 // import { CloudinaryStorage } from "multer-storage-cloudinary";
-// import q2m from "query-to-mongo";
+import q2m from "query-to-mongo";
 // import { basicAuthMiddleware } from "../../auth/basic.js";
 // import { JWTAuthMiddleware } from "../../auth/token.js";
 // const cloudinaryStorage = new CloudinaryStorage({
@@ -15,49 +19,62 @@ import { userHostOnliMiddleware, guestOnlyMiddleware } from "../../auth/usersOnl
 //     folder: "strivago",
 //   },
 // });
+interface _id {
+  id: string,
+}
 
 const accommodationsRouter = express.Router();
 
-accommodationsRouter.post("/", authMiddlaware, userHostOnliMiddleware,  async (req, res, next) => {
-  try {
-    const newAccommodation = new accommodationsModel({
-      ...req.body,
-      host: [req.user._id],
-    });
-    const { _id } = await newAccommodation.save();
-    res.status(201).send({ _id });
-  } catch (error) {
-    next(error);
+accommodationsRouter.post(
+  "/",
+  authMiddlaware,
+  userHostOnliMiddleware,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const newAccommodation = new accommodationsModel({
+        ...req.body,
+        host: [req.user._id],
+      });
+      const { _id } = await newAccommodation.save();
+      res.status(201).send({ _id });
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
-accommodationsRouter.get("/", async (req, res, next) => {
-  try {
-    const mongoQuery = q2m(req.query);
-    const total = await accommodationsModel.countDocuments(mongoQuery.criteria);
-    const accommodations = await accommodationsModel
-      .find(mongoQuery.criteria)
-      .limit(mongoQuery.options.limit)
-      .skip(mongoQuery.options.skip)
-      .sort(mongoQuery.options.sort);
-    res.send({
-      links: mongoQuery.links("/accommodations", total),
-      total,
-      totalPages: Math.ceil(total / mongoQuery.options.limit),
-      accommodations,
-    });
-  } catch (error) {
-    next(error);
+accommodationsRouter.get(
+  "/",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const mongoQuery = q2m(req.query);
+      const total = await accommodationsModel.countDocuments(
+        mongoQuery.criteria
+      );
+      const accommodations = await accommodationsModel
+        .find(mongoQuery.criteria)
+        .limit(mongoQuery.options.limit)
+        .skip(mongoQuery.options.skip)
+        .sort(mongoQuery.options.sort);
+      res.send({
+        links: mongoQuery.links("/accommodations", total),
+        total,
+        totalPages: Math.ceil(total / mongoQuery.options.limit),
+        accommodations,
+      });
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 accommodationsRouter.get(
   "/me/accommodation",
   authMiddlaware,
-  async (req, res, next) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const accomodation = await accommodationsModel.find().populate("host");
-      const users = accomodation.filter(user => user.host[0].role === "host");
+      const users = accomodation.filter((user) => user.host[0].role === "host");
       res.send(users);
     } catch (error) {
       console.log(error);
@@ -66,30 +83,33 @@ accommodationsRouter.get(
   }
 );
 
-accommodationsRouter.get("/:accommodationId", async (req, res, next) => {
-  try {
-    const accommodationId = req.params.accommodationId;
+accommodationsRouter.get(
+  "/:accommodationId",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const accommodationId = req.params.accommodationId;
 
-    const accommodation = await accommodationsModel.findById(accommodationId);
-    if (accommodation) {
-      res.send(accommodation);
-    } else {
-      next(
-        createHttpError(
-          404,
-          `accommodation with id ${accommodationId} not found!`
-        )
-      );
+      const accommodation = await accommodationsModel.findById(accommodationId);
+      if (accommodation) {
+        res.send(accommodation);
+      } else {
+        next(
+          createHttpError(
+            404,
+            `accommodation with id ${accommodationId} not found!`
+          )
+        );
+      }
+    } catch (error) {
+      next(error);
     }
-  } catch (error) {
-    next(error);
   }
-});
+);
 
 accommodationsRouter.put(
   "/:accommodationId",
   authMiddlaware /* basicAuthMiddleware */,
-  async (req, res, next) => {
+  async (req:Request, res:Response, next:NextFunction) => {
     try {
       const accommodationId = req.params.accommodationId;
       const updatedAccommodation = await accommodationsModel.findOne({
@@ -117,7 +137,7 @@ accommodationsRouter.delete(
   "/:accommodationId",
   authMiddlaware /* basicAuthMiddleware */,
 
-  async (req, res, next) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const accommodationId = req.params.accommodationId;
       const deletedAccommodation = await accommodationsModel.findByIdAndDelete(

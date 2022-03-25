@@ -11,7 +11,7 @@ const UserSchema = new Schema(
     facebookId:{type:String}
   },
   {
-    timeStamps: true,
+    timestamps: true,
   }
 )
 UserSchema.pre("save",  function (next) {

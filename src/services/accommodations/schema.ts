@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const { Schema, model } = mongoose;
 
-const commentSchemma = mongoose.Schema({
+const commentSchemma = new Schema({
   text: { type: String, minLength: 10, required: true },
   rate: { type: Number, min: 0, max: 5, required: true },
 
