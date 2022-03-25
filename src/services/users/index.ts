@@ -5,9 +5,12 @@ import { JWTauthenticate } from "../../auth/GenAndVerifyToken.js";
 import AccommodationModel from "../accommodations/schema.js";
 import UserModel from "./schema.js";
 import passport from "passport";
- interface user{
-_id:any
- }
+interface User {
+  _id: number;
+  email:string;
+  password:string
+ 
+}
 const userRouter = express.Router();
 //  -----------------------------------------------------ENDPOINT (ROUTE)--------------------------------
 // -------------------- post -REGISTER-----------------
@@ -45,15 +48,15 @@ userRouter.post("/login", async (req, res, next) => {
 });
 
 // -------------------- get me-----------------
-userRouter.get("/me", authMiddlaware, async (req, res, next) => {
-  try {
-    const uniqueuser = await UserModel.findById(req.?user._id);
-    res.send(uniqueuser);
-  } catch (error) {
-    console.log(error);
-    next(error);
-  }
-});
+// userRouter.get("/me", authMiddlaware, async (req, res, next) => {
+//   try {
+//     const uniqueuser = await UserModel.findById(req.user._id);
+//     res.send(uniqueuser);
+//   } catch (error) {
+//     console.log(error);
+//     next(error);
+//   }
+// });
 // -------------------- get me with accomdattion-----------------
 
 userRouter.get("/me/accommodation", authMiddlaware, async (req, res, next) => {

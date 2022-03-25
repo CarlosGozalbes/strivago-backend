@@ -2,10 +2,10 @@ import express from "express";
 import jwt from "jsonwebtoken";
 
 interface User {
-  _id: string;
-  role: string;
+  _id: String;
+  role: String;
 }
-export const JWTauthenticate = async (user) => {
+export const JWTauthenticate = async (user: User) => {
   try {
     const accessToken = await generateJWTToken({
       _id: user._id,

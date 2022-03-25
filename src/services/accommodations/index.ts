@@ -6,7 +6,7 @@ import {
   userHostOnliMiddleware,
   guestOnlyMiddleware,
 } from "../../auth/usersOnlyMiddleware.js";
-import { Request, Response, NextFunction } from "express";
+
 // import multer from "multer";
 // import { v2 as cloudinary } from "cloudinary";
 // import { CloudinaryStorage } from "multer-storage-cloudinary";
@@ -20,7 +20,7 @@ import { Request, Response, NextFunction } from "express";
 //   },
 // });
 
-interface user {
+interface User {
   _id: string;
 }
 
@@ -46,23 +46,32 @@ accommodationsRouter.post(
 
 accommodationsRouter.get("/", async (req, res, next) => {
   try {
-    const mongoQuery = q2m(req.query);
-    const total = await accommodationsModel.countDocuments(mongoQuery.criteria);
-    const accommodations = await accommodationsModel
-      .find(mongoQuery.criteria)
-      .limit(mongoQuery.options.limit)
-      .skip(mongoQuery.options.skip)
-      .sort(mongoQuery.options.sort);
-    res.send({
-      links: mongoQuery.links("/accommodations", total),
-      total,
-      totalPages: Math.ceil(total / mongoQuery.options.limit),
-      accommodations,
-    });
-  } catch (error) {
-    next(error);
+    const accomodation = await accommodationsModel.find();
+      if (accomodation) {
+        res.status(200).send(accomodation);
+      } else {
+        //   next(createError(404, "users not found"))
+        console.log("error");
+      }
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+    // const mongoQuery = q2m(req.query);
+    // const total = await accommodationsModel.countDocuments(mongoQuery.criteria);
+    // const accommodations = await accommodationsModel
+    //   .find(mongoQuery.criteria)
+    //   .limit(mongoQuery.options.limit)
+    //   .skip(mongoQuery.options.skip)
+    //   .sort(mongoQuery.options.sort);
+    // res.send({
+    //   links: mongoQuery.links("/accommodations", total),
+    //   total,
+    //   totalPages: Math.ceil(total / mongoQuery.options.limit),
+    //   accommodations,
+    // });
   }
-});
+);
 
 accommodationsRouter.get(
   "/me/accommodation",
