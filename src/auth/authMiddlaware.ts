@@ -1,9 +1,7 @@
 import createHttpError from "http-errors";
 import { verifyJWT } from "./GenAndVerifyToken.js";
 import { RequestHandler } from "express";
- interface User{
-     
- }
+
 export const authMiddlaware: RequestHandler = async (req, res, next) => {
   try {
     if (!req.headers.authorization) {

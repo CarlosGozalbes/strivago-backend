@@ -1,13 +1,12 @@
 import createHttpError from "http-errors";
 
 import { RequestHandler } from "express";
-declare module "express" {
-  interface Request {
-    user: any;
-  }
+
+interface User {
+  role: String;
 }
-export const userHostOnliMiddleware: RequestHandler = async (req,res,next
-) => {
+
+export const userHostOnliMiddleware: RequestHandler = async (req,res,next) => {
   try {
     console.log({ ruser: req.user });
     if (req.user.role === "host") {
