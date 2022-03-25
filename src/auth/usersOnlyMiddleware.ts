@@ -1,6 +1,7 @@
+import { NextFunction } from "express";
 import createHttpError from "http-errors";
 
-export const userHostOnliMiddleware = async (req, res, next) => {
+export const userHostOnliMiddleware = async (req:Request, res:Response, next:NextFunction) => {
   try {
     console.log({ ruser: req.user });
     if (req.user.role === "host") {
@@ -13,7 +14,7 @@ export const userHostOnliMiddleware = async (req, res, next) => {
   }
 };
 
-export const guestOnlyMiddleware = async (req, res, next) => {
+export const guestOnlyMiddleware = async (req:Request, res:Response, next:NextFunction) => {
   try {
     if (req.user.role === "guest") {
       next();

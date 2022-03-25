@@ -1,10 +1,10 @@
-import express from "express"
+import express, {Request, Response, NextFunction} from "express"
 import listEndpoints from "express-list-endpoints"
 import cors from "cors"
 import mongoose from "mongoose"
 import passport from "passport"
-import { facebookStrategy } from "./auth/oauth.js"
-import { badRequestHandler, unauthorizedHandler, notFoundHandler, genericErrorHandler, forbiddenHandler } from "./errorHandlers.js"
+import { facebookStrategy } from "./auth/oauth"
+import { badRequestHandler, unauthorizedHandler, notFoundHandler, genericErrorHandler, forbiddenHandler } from "./errorhandlers"
 import accommodationsRouter from "./services/accommodations/index.js"
 import userRouter from "./services/users/index.js"
 
@@ -12,7 +12,7 @@ import userRouter from "./services/users/index.js"
 const server = express()
 const port = process.env.PORT || 3001
 
-passport.use("facebook", facebookStrategy);
+passport.use("facebook", facebookStrategy.Strategy);
 //-----------------------------------MIDDLE WARES-----------------------------
 
 server.use(cors())
@@ -32,7 +32,7 @@ server.use(genericErrorHandler)
 server.use(forbiddenHandler)
 
 //-----------------------------------CONNECTIONS--------------------------
-mongoose.connect(process.env.MONGO_CONNECTION)
+mongoose.connect(process.env.MONGO_CONNECTION!)
 
 mongoose.connection.on("connected", () => {
   console.log("Successfully connected to Mongo!")
@@ -42,6 +42,4 @@ mongoose.connection.on("connected", () => {
   })
 })
 
-server.on("error", (error) => {
-  console.log(`Server is stopped : ${error}`)
-})
+

@@ -2,7 +2,9 @@ import mongoose from "mongoose";
 
 const { Schema, model } = mongoose;
 
-const commentSchemma = mongoose.Schema({
+
+
+const commentSchemma = new mongoose.Schema({
   text: { type: String, minLength: 10, required: true },
   rate: { type: Number, min: 0, max: 5, required: true },
 
@@ -12,7 +14,7 @@ const commentSchemma = mongoose.Schema({
   },
 });
 
-const accommodationSchema = new Schema(
+const accommodationSchema = new mongoose.Schema<IAccomodation>(
   {
     name: {  type: String, required: true, },
     city: { type: String, required: true },
@@ -20,7 +22,11 @@ const accommodationSchema = new Schema(
     image: { type: String, required: false },
     host: [{ type: Schema.Types.ObjectId, ref: "User" }],
     description: { type: String, minLength: 20, required: true },
-    comments: [commentSchemma],
+    comments: {
+      type:[commentSchemma],
+      required:true,
+      default:[]
+    },
   },
   {
     timestamps: true, // adds and manages automatically createdAt and updatedAt fields

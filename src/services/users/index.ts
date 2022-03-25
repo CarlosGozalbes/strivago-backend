@@ -1,9 +1,9 @@
 import express from "express"
 import createError from "http-errors"
-import { authMiddlaware } from "../../auth/authMiddlaware.js"
-import { JWTauthenticate } from "../../auth/GenAndVerifyToken.js"
-import AccommodationModel from "../accommodations/schema.js"
-import UserModel from "./schema.js"
+import { authMiddlaware } from "../../auth/authMiddlaware"
+import { JWTauthenticate } from "../../auth/GenAndVerifyToken"
+import AccommodationModel from "../accommodations/schema"
+import UserModel from "./schema"
 import passport from "passport"
 
 const userRouter = express.Router()
@@ -60,7 +60,7 @@ userRouter.get(
   async (req, res, next) => {
     try {
       const accomodation = await AccommodationModel.find().populate("host")
-      const users = accomodation.filter(user => user.host[0].role === "host");
+      const users = accomodation.filter(user => user.host.role === "host");
       res.send(users);
     } catch (error) {
       console.log(error);
@@ -76,8 +76,8 @@ userRouter.get("/", /* authMiddlaware, */ async (req, res, next) => {
     if (user) {
       res.send(user)
     } else {
-      //   next(createError(404, "users not found"))
-      console.log(error)
+        next(createError(404, "users not found"))
+      // console.log(error)
     }
   } catch (error) {
     console.log(error)

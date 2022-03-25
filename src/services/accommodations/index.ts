@@ -1,4 +1,4 @@
-import express from "express";
+import express, { NextFunction } from "express";
 import createHttpError from "http-errors";
 import accommodationsModel from "./schema.js";
 import { authMiddlaware } from "../../auth/authMiddlaware.js";
@@ -6,7 +6,7 @@ import { userHostOnliMiddleware, guestOnlyMiddleware } from "../../auth/usersOnl
 // import multer from "multer";
 // import { v2 as cloudinary } from "cloudinary";
 // import { CloudinaryStorage } from "multer-storage-cloudinary";
-// import q2m from "query-to-mongo";
+import q2m from "query-to-mongo";
 // import { basicAuthMiddleware } from "../../auth/basic.js";
 // import { JWTAuthMiddleware } from "../../auth/token.js";
 // const cloudinaryStorage = new CloudinaryStorage({
@@ -18,7 +18,7 @@ import { userHostOnliMiddleware, guestOnlyMiddleware } from "../../auth/usersOnl
 
 const accommodationsRouter = express.Router();
 
-accommodationsRouter.post("/", authMiddlaware, userHostOnliMiddleware,  async (req, res, next) => {
+accommodationsRouter.post("/", authMiddlaware, userHostOnliMiddleware,  async (req:Request, res:Response, next:NextFunction) => {
   try {
     const newAccommodation = new accommodationsModel({
       ...req.body,
@@ -57,7 +57,7 @@ accommodationsRouter.get(
   async (req, res, next) => {
     try {
       const accomodation = await accommodationsModel.find().populate("host");
-      const users = accomodation.filter(user => user.host[0].role === "host");
+      const users = accomodation.filter(user => user.host.role === "host");
       res.send(users);
     } catch (error) {
       console.log(error);
@@ -94,7 +94,7 @@ accommodationsRouter.put(
       const accommodationId = req.params.accommodationId;
       const updatedAccommodation = await accommodationsModel.findOne({
         _id: accommodationId,
-        host: { $in: [req.user._id] },
+        // host: { $in: [req.user._id] },
       });
       if (updatedAccommodation) {
         await updatedAccommodation.update(req.body);
@@ -288,3 +288,7 @@ accommodationsRouter.delete(
 // );
 
 export default accommodationsRouter;
+function q2m(query: ParsedQs) {
+  throw new Error("Function not implemented.");
+}
+

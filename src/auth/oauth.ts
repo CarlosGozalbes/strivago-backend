@@ -1,7 +1,8 @@
 import passport from 'passport'
 import FacebookStrategy from 'passport-facebook'
-import {JWTauthenticate} from '../auth/GenAndVerifyToken.js'
-import UsersModel from '../services/users/schema.js'
+import {JWTauthenticate} from './GenAndVerifyToken'
+import UsersModel from '../services/users/schema'
+import {Profile} from '../types'
 
 
 export const facebookStrategy = new FacebookStrategy({
@@ -9,7 +10,7 @@ export const facebookStrategy = new FacebookStrategy({
     clientSecret:process.env.FACEBOOK_SECRET_KEY,
     callbackURL: `${process.env.CALLBACK_URL}/users/facebookRedirect`
 },
-    async(accessToken, refreshToken, profile, passportNext)=> {
+    async(accessToken:string, refreshToken:string, profile:Profile, passportNext: (error: any, user?: any, info?: any) => void )=> {
         try {
             console.log("FaceBook:", profile);
             const user = await UsersModel.findOne({facebookId:profile.id})

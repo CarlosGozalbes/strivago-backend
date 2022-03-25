@@ -3,7 +3,16 @@ import bcrypt from "bcrypt"
 
 const { Schema, model } = mongoose
 
-const UserSchema = new Schema(
+interface UserDocument extends IUser {
+  email:string,
+  plainPW:string
+}
+interface UserModel extends mongoose.Model<UserDocument>{
+  checkCredentials(email:string, plainPW:string): UserDocument
+}
+
+
+const UserSchema = new Schema<IUser>(
   {
     email: { type: String, required: true },
     password: { type: String, required: true },
@@ -11,7 +20,7 @@ const UserSchema = new Schema(
     facebookId:{type:String}
   },
   {
-    timeStamps: true,
+    timestamps: true,
   }
 )
 UserSchema.pre("save",  function (next) {
@@ -37,7 +46,7 @@ UserSchema.methods.toJSON = function () {
   return userObject
 }
 
-UserSchema.statics.checkCredentials = async function (email, plainPW) {
+UserSchema.statics.checkCredentials = async function (email, plainPW){
   const user = await this.findOne({ email })
 
   if (user) {
@@ -52,7 +61,7 @@ UserSchema.statics.checkCredentials = async function (email, plainPW) {
     return null
   }
 }
-
-export default model("User", UserSchema)
+const User: UserModel = mongoose.model<UserDocument, UserModel>("User", UserSchema)
+export default User
 
 // Every User registers with email, password and a role, which could be either host or guest.
