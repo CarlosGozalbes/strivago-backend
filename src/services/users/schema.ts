@@ -1,5 +1,6 @@
 import mongoose from "mongoose"
 import bcrypt from "bcrypt"
+import { IUser } from "../../types"
 
 const { Schema, model } = mongoose
 
